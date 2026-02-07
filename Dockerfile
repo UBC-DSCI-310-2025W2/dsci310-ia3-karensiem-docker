@@ -1,12 +1,13 @@
-# Use the Rocker RStudio image for R 4.4.2 as a base
 FROM rocker/rstudio:4.4.2
 
-# Set the working directory inside the container
-WORKDIR /home/rstudio
+USER root
 
-# Copy the project files into the container (if any)
-COPY . /home/rstudio
+# Install remotes so we can pin package versions
+RUN Rscript -e 'install.packages("remotes", repos="https://cloud.r-project.org")'
 
+# Install a pinned R package (example: cowsay)
+RUN Rscript -e 'remotes::install_version("cowsay", version = "0.8.0", repos = "https://cloud.r-project.org")'
 
-# By default, RStudio Server will run on port 8787
+USER rstudio
+
 EXPOSE 8787
